@@ -20,11 +20,51 @@ model, features = load_model()
 st.title("🌾 Crop Price Prediction System")
 st.caption("AI-powered crop price forecasting")
 
-st.sidebar.header("Input Parameters")
+st.sidebar.title("🌱 Crop Conditions")
 
 input_data = {}
-for feature in features:
-    input_data[feature] = st.sidebar.number_input(feature, value=0.0)
+
+with st.sidebar.expander("📅 Time & Climate", expanded=True):
+    input_data["year"] = st.number_input("Year", min_value=2015, max_value=2035, value=2025)
+
+    input_data["rainfall_mm"] = st.slider(
+        "Rainfall (mm)", 0, 3000, 800
+    )
+
+    input_data["rainfall_deviation_pct"] = st.slider(
+        "Rainfall Deviation (%)", -100, 100, 0
+    )
+
+    input_data["avg_temp_c"] = st.slider(
+        "Average Temperature (°C)", 10, 45, 30
+    )
+
+with st.sidebar.expander("🌾 Farm & Soil", expanded=True):
+    input_data["yield_qtl_per_acre"] = st.slider(
+        "Yield (quintal/acre)", 0.0, 50.0, 15.0
+    )
+
+    input_data["soil_fertility_index"] = st.slider(
+        "Soil Fertility Index", 0.0, 1.0, 0.6
+    )
+
+    input_data["irrigated"] = st.radio(
+        "Irrigation Available?", ["No", "Yes"]
+    )
+    input_data["irrigated"] = 1 if input_data["irrigated"] == "Yes" else 0
+
+with st.sidebar.expander("💰 Cost Factors", expanded=True):
+    input_data["fertilizer_cost_rs_per_acre"] = st.slider(
+        "Fertilizer Cost (₹/acre)", 0, 20000, 5000
+    )
+
+    input_data["labor_cost_rs_per_acre"] = st.slider(
+        "Labor Cost (₹/acre)", 0, 30000, 8000
+    )
+
+    input_data["diesel_price_rs_per_l"] = st.slider(
+        "Diesel Price (₹/L)", 60, 120, 90
+    )
 
 input_df = pd.DataFrame([input_data])
 
