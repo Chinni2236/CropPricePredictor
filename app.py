@@ -97,6 +97,27 @@ input_df = pd.DataFrame(
     columns=features
 )
 
+# -------------------- CROP SELECTION --------------------
+crop_features = [f for f in features if f.startswith("crop_")]
+
+crop_names = [f.replace("crop_", "").replace("_", " ").title() for f in crop_features]
+
+if crop_features:
+    selected_crop = st.sidebar.selectbox(
+        "🌾 Select Crop",
+        crop_names
+    )
+
+    # Reset all crop columns to 0
+    for f in crop_features:
+        input_data[f] = 0
+
+    # Activate selected crop
+    selected_feature = "crop_" + selected_crop.lower().replace(" ", "_")
+    if selected_feature in input_data:
+        input_data[selected_feature] = 1
+
+
 # -------------------- PREDICTION --------------------
 if st.button("📊 Predict Price"):
     prediction = model.predict(input_df)[0]
