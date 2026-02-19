@@ -19,30 +19,49 @@ def load_model():
 
 model, features = load_model()
 
-# -------------------- STYLES --------------------
+# -------------------- SIDEBAR STYLE --------------------
 st.markdown("""
 <style>
 [data-testid="stSidebar"] {
     background-color: #0f172a;
-}
-h1, h2, h3, h4, label {
-    color: white;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # -------------------- TITLE --------------------
 st.title("🌾 Crop Price Prediction System")
-st.caption("AI-powered crop price forecasting")
+st.caption("AI-powered crop price forecasting for Telangana")
 
 st.divider()
 
-# -------------------- SIDEBAR INPUTS --------------------
-st.sidebar.title("🌱 Crop Conditions")
-
-# 🔒 Initialize ALL model features with default 0
+# -------------------- INITIALIZE INPUT DATA --------------------
 input_data = {feature: 0 for feature in features}
 
+# -------------------- 🌾 CROP SELECTION (FIRST) --------------------
+crop_features = [f for f in features if f.startswith("crop_")]
+
+# Actual crop names from dataset (verified)
+all_crops = ["Paddy", "Maize", "Chilli", "Turmeric", "Cotton"]
+
+selected_crop = st.sidebar.selectbox(
+    "🌾 Crop Type",
+    all_crops
+)
+
+# Reset all crop_* columns
+for f in crop_features:
+    input_data[f] = 0
+
+# Handle drop_first=True safely
+selected_feature = "crop_" + selected_crop.lower()
+
+if selected_feature in input_data:
+    input_data[selected_feature] = 1
+# else: baseline crop (dropped during get_dummies)
+
+st.sidebar.divider()
+
+# -------------------- 📅 TIME & CLIMATE --------------------
 with st.sidebar.expander("📅 Time & Climate", expanded=True):
     if "year" in input_data:
         input_data["year"] = st.number_input("Year", 2015, 2035, 2025)
@@ -60,6 +79,7 @@ with st.sidebar.expander("📅 Time & Climate", expanded=True):
             "Average Temperature (°C)", 10, 45, 30
         )
 
+# -------------------- 🌾 FARM & SOIL --------------------
 with st.sidebar.expander("🌾 Farm & Soil", expanded=True):
     if "yield_qtl_per_acre" in input_data:
         input_data["yield_qtl_per_acre"] = st.slider(
@@ -75,6 +95,7 @@ with st.sidebar.expander("🌾 Farm & Soil", expanded=True):
         irrigated = st.radio("Irrigation Available?", ["No", "Yes"])
         input_data["irrigated"] = 1 if irrigated == "Yes" else 0
 
+# -------------------- 💰 COST FACTORS --------------------
 with st.sidebar.expander("💰 Cost Factors", expanded=True):
     if "fertilizer_cost_rs_per_acre" in input_data:
         input_data["fertilizer_cost_rs_per_acre"] = st.slider(
@@ -91,49 +112,23 @@ with st.sidebar.expander("💰 Cost Factors", expanded=True):
             "Diesel Price (₹/L)", 60, 120, 90
         )
 
-# 🔐 FORCE correct feature order for XGBoost
+# -------------------- CREATE MODEL INPUT --------------------
 input_df = pd.DataFrame(
     [[input_data[f] for f in features]],
     columns=features
 )
-
-# -------------------- CROP SELECTION (FIRST) --------------------
-crop_features = [f for f in features if f.startswith("crop_")]
-
-crop_names = [
-    f.replace("crop_", "").replace("_", " ").title()
-    for f in crop_features
-]
-
-if crop_features:
-    selected_crop = st.sidebar.selectbox(
-        "🌾 Crop Type",
-        crop_names
-    )
-
-    # Reset all crop columns
-    for f in crop_features:
-        input_data[f] = 0
-
-    # Activate selected crop
-    selected_feature = "crop_" + selected_crop.lower().replace(" ", "_")
-    if selected_feature in input_data:
-        input_data[selected_feature] = 1
-
-st.sidebar.divider()
 
 # -------------------- PREDICTION --------------------
 if st.button("📊 Predict Price"):
     prediction = model.predict(input_df)[0]
 
     st.metric(
-        label="💰 Predicted Crop Price (₹ per quintal)",
+        label=f"💰 Predicted {selected_crop} Price (₹ per quintal)",
         value=f"{prediction:,.2f}"
     )
 
     st.divider()
 
-    # Feature value visualization
     feature_df = pd.DataFrame({
         "Feature": features,
         "Value": input_df.iloc[0].values
