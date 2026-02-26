@@ -3,14 +3,12 @@ import joblib
 import pandas as pd
 import plotly.express as px
 
-# ==================== PAGE CONFIG ====================
 st.set_page_config(
     page_title="Crop Price Prediction",
     page_icon="🌾",
     layout="wide"
 )
 
-# ==================== LOAD MODEL ====================
 @st.cache_resource
 def load_model():
     model = joblib.load("xgb_crop_price_model.pkl")
@@ -19,7 +17,6 @@ def load_model():
 
 model, features = load_model()
 
-# ==================== SIDEBAR STYLE ====================
 st.markdown("""
 <style>
 [data-testid="stSidebar"] {
@@ -28,20 +25,16 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ==================== TITLE ====================
 st.title("🌾 Crop Price Prediction System")
 st.caption("AI-powered crop price forecasting for Telangana")
 st.divider()
 
-# ==================== INITIALIZE INPUT ====================
+
 input_data = {feature: 0 for feature in features}
 
-# ======================================================
-# 🌾🌾🌾 CROP SELECTION — MUST BE FIRST 🌾🌾🌾
-# ======================================================
 crop_features = [f for f in features if f.startswith("crop_")]
 
-# Crops verified from your dataset
+
 all_crops = ["Paddy", "Maize", "Chilli", "Turmeric", "Cotton"]
 
 selected_crop = st.sidebar.selectbox(
@@ -49,21 +42,19 @@ selected_crop = st.sidebar.selectbox(
     all_crops
 )
 
-# Reset all crop columns
+
 for f in crop_features:
     input_data[f] = 0
 
-# Activate selected crop (drop_first=True safe)
+
 selected_feature = "crop_" + selected_crop.lower()
 if selected_feature in input_data:
     input_data[selected_feature] = 1
-# else → baseline crop (dropped during training)
 
-# ==================== OTHER SIDEBAR INPUTS ====================
 st.sidebar.title("🌱 Crop Conditions")
 st.sidebar.divider()
 
-# -------------------- TIME & CLIMATE --------------------
+
 with st.sidebar.expander("📅 Time & Climate", expanded=True):
     if "year" in input_data:
         input_data["year"] = st.number_input("Year", 2015, 2035, 2025)
@@ -81,7 +72,6 @@ with st.sidebar.expander("📅 Time & Climate", expanded=True):
             "Average Temperature (°C)", 10, 45, 30
         )
 
-# -------------------- FARM & SOIL --------------------
 with st.sidebar.expander("🌾 Farm & Soil", expanded=True):
     if "yield_qtl_per_acre" in input_data:
         input_data["yield_qtl_per_acre"] = st.slider(
@@ -97,7 +87,6 @@ with st.sidebar.expander("🌾 Farm & Soil", expanded=True):
         irrigated = st.radio("Irrigation Available?", ["No", "Yes"])
         input_data["irrigated"] = 1 if irrigated == "Yes" else 0
 
-# -------------------- COST FACTORS --------------------
 with st.sidebar.expander("💰 Cost Factors", expanded=True):
     if "fertilizer_cost_rs_per_acre" in input_data:
         input_data["fertilizer_cost_rs_per_acre"] = st.slider(
@@ -114,13 +103,11 @@ with st.sidebar.expander("💰 Cost Factors", expanded=True):
             "Diesel Price (₹/L)", 60, 120, 90
         )
 
-# ==================== MODEL INPUT ====================
 input_df = pd.DataFrame(
     [[input_data[f] for f in features]],
     columns=features
 )
 
-# ==================== PREDICTION ====================
 if st.button("📊 Predict Price"):
     prediction = model.predict(input_df)[0]
 
@@ -146,6 +133,5 @@ if st.button("📊 Predict Price"):
 
     st.plotly_chart(fig, use_container_width=True)
 
-# ==================== FOOTER ====================
 st.divider()
 st.caption("Built with ❤️ using Machine Learning")
