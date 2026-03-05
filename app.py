@@ -38,17 +38,17 @@ col1, col2 = st.columns([1,2])
 with col1:
 
 ```
-st.subheader("Input Conditions")
-
-crop = st.selectbox("Crop",["Paddy","Maize","Cotton","Turmeric","Chilli"])
-rainfall = st.slider("Rainfall (mm)",0,2000,850)
-temp = st.slider("Temperature (°C)",10,45,30)
-yield_q = st.slider("Yield (quintal/acre)",5,40,18)
-ndvi = st.slider("Satellite Vegetation Index",0.2,0.9,0.6)
-demand = st.slider("Export Demand Index",0.0,1.0,0.5)
-mandi = st.slider("Mandi Arrivals",500,10000,5000)
-neighbor_price = st.slider("Neighbor State Price (₹)",1000,3000,1800)
-last_week_price = st.slider("Last Week Price (₹)",1000,3000,1700)
+    st.subheader("Input Conditions")
+    
+    crop = st.selectbox("Crop",["Paddy","Maize","Cotton","Turmeric","Chilli"])
+    rainfall = st.slider("Rainfall (mm)",0,2000,850)
+    temp = st.slider("Temperature (°C)",10,45,30)
+    yield_q = st.slider("Yield (quintal/acre)",5,40,18)
+    ndvi = st.slider("Satellite Vegetation Index",0.2,0.9,0.6)
+    demand = st.slider("Export Demand Index",0.0,1.0,0.5)
+    mandi = st.slider("Mandi Arrivals",500,10000,5000)
+    neighbor_price = st.slider("Neighbor State Price (₹)",1000,3000,1800)
+    last_week_price = st.slider("Last Week Price (₹)",1000,3000,1700)
 
 input_data = {f:0 for f in features}
 
