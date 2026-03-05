@@ -10,31 +10,44 @@ model = joblib.load("xgb_crop_price_model.pkl")
 features = joblib.load("model_features.pkl")
 
 st.title("AI Agricultural Market Intelligence Platform")
-st.caption("Machine Learning Powered Crop Price Prediction")
 
 st.sidebar.header("Farm Conditions")
 
+crop = st.sidebar.selectbox(
+    "Crop Type",
+    ["Paddy","Maize","Cotton","Turmeric","Chilli"]
+)
+
 rainfall = st.sidebar.slider("Rainfall (mm)",0,1500,800)
 temperature = st.sidebar.slider("Temperature (°C)",10,45,30)
-yield_q = st.sidebar.slider("Yield (quintal/acre)",5,40,20)
 ndvi = st.sidebar.slider("NDVI Vegetation Index",0.3,0.9,0.6)
+soil = st.sidebar.slider("Soil Fertility Index",0.3,0.9,0.6)
 demand = st.sidebar.slider("Export Demand Index",0.1,1.0,0.5)
 arrivals = st.sidebar.slider("Mandi Arrivals (qtl)",2000,10000,5000)
-neighbor_price = st.sidebar.slider("Neighbor State Price",1200,2500,1700)
-soil = st.sidebar.slider("Soil Fertility Index",0.3,0.9,0.6)
+
+yield_q = (
+    rainfall*0.015 +
+    ndvi*15 +
+    soil*10
+)
 
 input_data = {
-    "rainfall_mm": rainfall,
-    "avg_temp_c": temperature,
-    "yield_qtl_per_acre": yield_q,
-    "ndvi_satellite_index": ndvi,
-    "export_demand_index": demand,
-    "mandi_arrivals_qtl": arrivals,
-    "neighbor_state_price_rs": neighbor_price,
-    "soil_fertility_index": soil
+    "rainfall_mm":rainfall,
+    "avg_temp_c":temperature,
+    "yield_qtl_per_acre":yield_q,
+    "ndvi_satellite_index":ndvi,
+    "export_demand_index":demand,
+    "mandi_arrivals_qtl":arrivals,
+    "soil_fertility_index":soil
 }
 
+for c in ["Paddy","Maize","Cotton","Turmeric","Chilli"]:
+    col = "crop_"+c
+    input_data[col] = 1 if crop==c else 0
+
 input_df = pd.DataFrame([input_data])
+
+input_df = input_df.reindex(columns=features,fill_value=0)
 
 prediction = model.predict(input_df)[0]
 
@@ -47,17 +60,6 @@ c1.metric("Predicted Price ₹/Qtl",f"{prediction:.2f}")
 c2.metric("Best Case ₹",f"{best_case:.2f}")
 c3.metric("Worst Case ₹",f"{worst_case:.2f}")
 
-st.subheader("Input Feature Comparison")
-
-chart_df = pd.DataFrame({
-    "Feature":list(input_data.keys()),
-    "Value":list(input_data.values())
-})
-
-fig = px.bar(chart_df,x="Feature",y="Value")
-
-st.plotly_chart(fig,use_container_width=True)
-
 st.subheader("Feature Importance")
 
 importance = pd.Series(
@@ -65,12 +67,12 @@ importance = pd.Series(
     index=features
 ).sort_values()
 
-fig2 = px.bar(
+fig = px.bar(
     importance,
     orientation="h"
 )
 
-st.plotly_chart(fig2,use_container_width=True)
+st.plotly_chart(fig,use_container_width=True)
 
 st.subheader("30 Day Price Forecast")
 
@@ -96,11 +98,11 @@ forecast = pd.DataFrame({
     "Predicted Price":prices
 })
 
-fig3 = px.line(
+fig2 = px.line(
     forecast,
     x="Day",
     y="Predicted Price",
     markers=True
 )
 
-st.plotly_chart(fig3,use_container_width=True)
+st.plotly_chart(fig2,use_container_width=True)
