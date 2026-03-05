@@ -16,24 +16,21 @@ def get_weather(city):
 
     try:
 
-        r = requests.get(url, timeout=10)
-        data = r.json()
+        response = requests.get(url, timeout=10)
+        data = response.json()
 
         weather_data = data.get("current_weather", {})
 
-        temperature = weather_data.get("temperature", 30)
-        wind = weather_data.get("windspeed", 5)
-
         weather = {
-            "temperature": temperature,
-            "wind": wind,
+            "temperature": weather_data.get("temperature", 30),
+            "wind": weather_data.get("windspeed", 5),
             "rainfall": 0,
             "humidity": 60
         }
 
         return weather
 
-    except:
+    except Exception:
 
         return {
             "temperature": 30,
