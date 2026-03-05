@@ -19,7 +19,7 @@ st.caption("Machine Learning Powered Crop Price Forecasting")
 col1, col2 = st.columns([1, 2])
 
 with col1:
-st.subheader("Input Conditions")
+    st.subheader("Input Conditions")
 
     crop = st.selectbox("Crop", ["Paddy", "Maize", "Cotton", "Turmeric", "Chilli"])
     rainfall = st.slider("Rainfall (mm)", 0, 2000, 850)
@@ -89,7 +89,7 @@ st.subheader("Input Conditions")
         c3.metric("MAE", "63")
 
 with col2:
-st.subheader("Feature Impact Overview")
+    st.subheader("Feature Impact Overview")
 
     chart_df = pd.DataFrame(
         {
@@ -130,7 +130,7 @@ future_days = np.arange(1, 31)
 future_inputs = []
 
 for i in future_days:
-temp_input = input_df.copy()
+    temp_input = input_df.copy()
 
     
     if "rainfall_mm" in temp_input:
