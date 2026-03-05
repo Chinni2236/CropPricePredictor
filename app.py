@@ -95,7 +95,18 @@ st.subheader("30-Day Price Forecast")
 
 future_days = np.arange(1,31)
 
-future_prices = model.predict(pd.concat([input_df]*30, ignore_index=True))
+future_inputs = []
+
+for i in future_days:
+    temp_input = input_df.copy()
+    temp_input["rainfall_mm"] = rainfall + np.random.normal(0,20)
+    temp_input["mandi_arrivals_qtl"] = mandi + np.random.randint(-500,500)
+    temp_input["export_demand_index"] = demand + np.random.normal(0,0.05)
+    future_inputs.append(temp_input)
+
+future_df = pd.concat(future_inputs,ignore_index=True)
+
+future_prices = model.predict(future_df)
 
 forecast_df = pd.DataFrame({
     "Day": future_days,
