@@ -1,20 +1,28 @@
 import requests
 
-API_KEY = "YOUR_OPENWEATHER_API_KEY"
+city_coords = {
+    "Hyderabad": (17.385, 78.486),
+    "Warangal": (17.978, 79.594),
+    "Karimnagar": (18.438, 79.128),
+    "Khammam": (17.247, 80.151),
+    "Nizamabad": (18.672, 78.100)
+}
 
 def get_weather(city):
 
-    url=f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric"
+    lat, lon = city_coords[city]
 
-    r=requests.get(url)
+    url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
 
-    data=r.json()
+    r = requests.get(url)
 
-    weather={
-        "temperature":data["main"]["temp"],
-        "humidity":data["main"]["humidity"],
-        "rainfall":data.get("rain",{}).get("1h",0),
-        "wind":data["wind"]["speed"]
+    data = r.json()
+
+    weather = {
+        "temperature": data["current_weather"]["temperature"],
+        "wind": data["current_weather"]["windspeed"],
+        "rainfall": 0,
+        "humidity": 60
     }
 
     return weather
