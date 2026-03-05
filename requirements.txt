@@ -1,10 +1,11 @@
 streamlit
 pandas
 numpy
-xgboost
 scikit-learn
-plotly
+xgboost
 joblib
+plotly
 pydeck
 shap
 matplotlib
+requests
