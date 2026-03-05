@@ -5,7 +5,3 @@ scikit-learn
 xgboost
 joblib
 plotly
-pydeck
-shap
-matplotlib
-requests
