@@ -10,19 +10,34 @@ city_coords = {
 
 def get_weather(city):
 
-    lat, lon = city_coords[city]
+    lat, lon = city_coords.get(city, (17.385, 78.486))
 
     url = f"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true"
 
-    r = requests.get(url)
+    try:
 
-    data = r.json()
+        r = requests.get(url, timeout=10)
+        data = r.json()
 
-    weather = {
-        "temperature": data["current_weather"]["temperature"],
-        "wind": data["current_weather"]["windspeed"],
-        "rainfall": 0,
-        "humidity": 60
-    }
+        weather_data = data.get("current_weather", {})
 
-    return weather
+        temperature = weather_data.get("temperature", 30)
+        wind = weather_data.get("windspeed", 5)
+
+        weather = {
+            "temperature": temperature,
+            "wind": wind,
+            "rainfall": 0,
+            "humidity": 60
+        }
+
+        return weather
+
+    except:
+
+        return {
+            "temperature": 30,
+            "wind": 5,
+            "rainfall": 0,
+            "humidity": 60
+        }
