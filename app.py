@@ -30,14 +30,10 @@ city = st.sidebar.selectbox(
     ["Hyderabad","Warangal","Karimnagar","Khammam","Nizamabad"]
 )
 
-weather = get_weather(city) or {
-    "temperature":30,
-    "rainfall":0,
-    "humidity":60
-}
+weather = get_weather(city)
 
-rainfall = weather["rainfall"]
-temperature = weather["temperature"]
+rainfall = weather.get("rainfall", 0)
+temperature = weather.get("temperature", 30)
 
 yield_q = st.sidebar.slider("Yield (quintal/acre)",5,40,18)
 ndvi = st.sidebar.slider("NDVI Vegetation Index",0.3,0.9,0.6)
