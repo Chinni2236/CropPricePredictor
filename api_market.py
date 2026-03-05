@@ -1,20 +1,17 @@
-import requests
 import pandas as pd
-
-API_KEY="YOUR_DATA_GOV_API_KEY"
 
 def get_mandi_prices():
 
-    url=f"https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key={API_KEY}&format=json&limit=100"
+    url = "https://raw.githubusercontent.com/plotly/datasets/master/india_agmarknet_prices.csv"
 
-    r=requests.get(url)
+    df = pd.read_csv(url)
 
-    data=r.json()
-
-    records=data["records"]
-
-    df=pd.DataFrame(records)
-
-    df["modal_price"]=df["modal_price"].astype(float)
+    df = df.rename(columns={
+        "Commodity": "commodity",
+        "State": "state",
+        "District": "district",
+        "Market": "market",
+        "Modal Price": "modal_price"
+    })
 
     return df
