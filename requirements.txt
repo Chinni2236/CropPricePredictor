@@ -7,3 +7,4 @@ plotly
 joblib
 pydeck
 shap
+matplotlib
