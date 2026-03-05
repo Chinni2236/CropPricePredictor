@@ -103,10 +103,8 @@ with st.sidebar.expander("💰 Cost Factors", expanded=True):
             "Diesel Price (₹/L)", 60, 120, 90
         )
 
-input_df = pd.DataFrame(
-    [[input_data[f] for f in features]],
-    columns=features
-)
+input_df = pd.DataFrame([input_data])
+input_df = input_df.reindex(columns=features, fill_value=0)
 
 if st.button("📊 Predict Price"):
     prediction = model.predict(input_df)[0]
