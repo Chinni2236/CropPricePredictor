@@ -97,7 +97,11 @@ with col2:
     st.subheader("Input Feature Comparison")
 
     raw_values = np.array([rainfall,temp,yield_q,ndvi,demand,mandi])
-    scaled_values = raw_values / raw_values.max()
+
+    mean = raw_values.mean()
+    std = raw_values.std()
+
+    scaled_values = (raw_values - mean) / std
 
     chart_df = pd.DataFrame({
         "Feature":["Rainfall","Temperature","Yield","NDVI","Demand","Arrivals"],
