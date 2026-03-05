@@ -30,7 +30,11 @@ city = st.sidebar.selectbox(
     ["Hyderabad","Warangal","Karimnagar","Khammam","Nizamabad"]
 )
 
-weather = get_weather(city)
+weather = get_weather(city) or {
+    "temperature":30,
+    "rainfall":0,
+    "humidity":60
+}
 
 rainfall = weather["rainfall"]
 temperature = weather["temperature"]
