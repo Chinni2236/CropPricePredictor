@@ -122,13 +122,15 @@ st.subheader("AI Explanation")
 explainer = shap.TreeExplainer(model)
 shap_values = explainer.shap_values(input_df)
 
-fig3 = shap.plots.waterfall(
-    shap.Explanation(
-        values=shap_values[0],
-        base_values=explainer.expected_value,
-        data=input_df.iloc[0],
-        feature_names=input_df.columns
-    )
+import matplotlib.pyplot as plt
+
+exp = shap.Explanation(
+    values=shap_values[0],
+    base_values=explainer.expected_value,
+    data=input_df.iloc[0],
+    feature_names=input_df.columns
 )
 
-st.pyplot(fig3)
+plt.figure()
+shap.plots.waterfall(exp, show=False)
+st.pyplot(plt.gcf())
