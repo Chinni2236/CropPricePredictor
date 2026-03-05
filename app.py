@@ -37,7 +37,7 @@ col1, col2 = st.columns([1,2])
 
 with col1:
 
-```
+    
     st.subheader("Input Conditions")
     
     crop = st.selectbox("Crop",["Paddy","Maize","Cotton","Turmeric","Chilli"])
