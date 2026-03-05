@@ -30,7 +30,26 @@ st.caption("AI-powered crop price forecasting for Telangana")
 st.divider()
 
 
-input_data = {feature: 0 for feature in features}
+defaults = {
+    "rainfall_mm": 800,
+    "rainfall_deviation_pct": 0,
+    "avg_temp_c": 30,
+    "yield_qtl_per_acre": 15,
+    "soil_fertility_index": 0.6,
+    "fertilizer_cost_rs_per_acre": 5000,
+    "labor_cost_rs_per_acre": 8000,
+    "diesel_price_rs_per_l": 90,
+    "mandi_arrivals_qtl": 5000,
+    "distance_to_mandi_km": 20,
+    "storage_available": 1,
+    "mspprocurement_active": 1,
+    "msp_rs_per_qtl": 1800,
+    "export_demand_index": 0.5,
+    "neighbor_state_price_rs": 1600,
+    "price_lag_7d": 1500
+}
+
+input_data = {feature: defaults.get(feature, 0) for feature in features}
 
 crop_features = [f for f in features if f.startswith("crop_")]
 
